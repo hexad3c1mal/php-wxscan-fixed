@@ -1,3 +1,6 @@
+function url_match(url) {
+    return (/icons\/land\/(day|night)\/([a-z_]*)\/?([a-z_]*)/).exec(url);
+}
 
 function Loops(bindDataManager) {
 	var //dataManager,
@@ -8,6 +11,7 @@ function Loops(bindDataManager) {
 	obsData = bindDataManager.observations;
 	foreDataDaily = bindDataManager.forecasts('daily');
 	foreDataHourly = bindDataManager.forecasts('hourly');
+	window.obsData_global = obsData;
 
 
 	// init the display loops
@@ -284,70 +288,44 @@ function calcHourlyReport(data) {
 }
 
 function mapNWSicons(url){
-	var map = {
-			skc:[26,25],
-			few:[28,27],
-			sct:[24,23],
-			bkn:[22,21],
-			ovc:[20,20],
-			wind_skc:[26,25,47],
-			wind_few:[28,27,47],
-			wind_sct:[24,23,47],
-			wind_bkn:[22,21,47],
-			wind_ovc:[20,20,47],
-			snow:[10,10],
-			rain_snow:[2,2],
-			rain_sleet:[38,38],
-			snow_sleet:[3,3],
-			fzra:[6,6],
-			rain_fzra:[6,6],
-			snow_fzra:[44,44],
-			sleet:[13,13],
-			rain:[8,8],
-			rain_showers:[7,7],
-			rain_showers_hi:[5,5],
-			tsra:[1,1],
-			tsra_sct:[29,37],
-			tsra_hi:[29,37],
-			tornado:[46,46],
-			hurr_warn:[45,45],
-			hurr_watch:[45,45],
-			ts_warn:[45,45],
-			ts_watch:[45,45],
-			ts_hurr_warn:[45,45],
-			dust:[14,14],
-			smoke:[16,16],
-			haze:[16,16],
-			hot:[16,16],
-			cold:[42,42],
-			blizzard:[11,11],
-			fog:[15,15]
-	},
-	matches = url.match(/icons\/land\/(day|night)\/([a-z_]*)\/?([a-z_]*)/),  // day or night followed by one or more condition codes
-	idx = {day:0, night:1}[matches[1]], 
-	ret=[], match;
-	
-	for (i=2; i<matches.length; i++){
-		
-		if (matches[i]) {
-			match = map[ matches[i] ];
-		
-			ret.push( match[idx] );
+    // if url is an array, get the first element
+    if (Array.isArray(url)) url = url[0];
 
-			// some icons are 2 layered 
-			if (match.length>2) {
-				ret.push( match[2] );
-			}
-		}
-	}
-	
-	// place word icons last so they render on top
-	if (ret.length>1 && [15,47,41,42, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 20, 31, 33, 34, 38, 39, 40, 44].indexOf( ret[1] )>-1) {
-		ret.swap(0,1);
-	}
-	
-	return ret.map(function(num){
-		return 'images/icons/' + ('0'+num).slice(-2) + '.png';
-	});
+    // if it already looks like an image path, just return it
+    if (url.match(/images\/icons\/\d+\.png$/)) return [url];
 
+    // fallback to old mapping logic
+    var map = {
+        skc:[26,25], few:[28,27], sct:[24,23], bkn:[22,21], ovc:[20,20],
+        wind_skc:[26,25,47], wind_few:[28,27,47], wind_sct:[24,23,47],
+        wind_bkn:[22,21,47], wind_ovc:[20,20,47],
+        snow:[10,10], rain_snow:[2,2], rain_sleet:[38,38], snow_sleet:[3,3],
+        fzra:[6,6], rain_fzra:[6,6], snow_fzra:[44,44], sleet:[13,13],
+        rain:[8,8], rain_showers:[7,7], rain_showers_hi:[5,5],
+        tsra:[1,1], tsra_sct:[29,37], tsra_hi:[29,37],
+        tornado:[46,46], hurr_warn:[45,45], hurr_watch:[45,45],
+        ts_warn:[45,45], ts_watch:[45,45], ts_hurr_warn:[45,45],
+        dust:[14,14], smoke:[16,16], haze:[16,16], hot:[16,16],
+        cold:[42,42], blizzard:[11,11], fog:[15,15]
+    };
+
+    var matches = url.match(/icons\/land\/(day|night)\/([a-z_]*)\/?([a-z_]*)/);
+    if (!matches) return [];  // just return empty if no match
+
+    var idx = {day:0, night:1}[matches[1]],
+        ret = [], match;
+
+    for (var i=2;i<matches.length;i++){
+        if (matches[i]){
+            match = map[matches[i]];
+            ret.push(match[idx]);
+            if (match.length>2) ret.push(match[2]);
+        }
+    }
+
+    if (ret.length>1 && [15,47,41,42,1,2,3,4,5,6,7,8,9,10,12,13,20,31,33,34,38,39,40,44].indexOf(ret[1])>-1){
+        var tmp = ret[0]; ret[0]=ret[1]; ret[1]=tmp;
+    }
+
+    return ret.map(num=>'images/icons/'+('0'+num).slice(-2)+'.png');
 }

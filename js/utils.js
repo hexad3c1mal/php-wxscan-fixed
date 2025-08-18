@@ -140,9 +140,38 @@ function heatIndex(T, R) { // T = temp, R = relative humidity
 
 
 // maps current condition code to icon
-function getCCicon(ccCode){
-	return "images/icons/" + ( "0" +  {0:1,1:1,2:1,3:1,4:1,5:2,6:38,7:3,8:4,9:5,10:6,11:7,12:7,13:9,14:10,15:39,16:12,17:13,18:13,19:17,20:15,21:16,22:14,23:18,24:18,25:42,26:20,27:21,28:22,29:23,30:24,31:25,32:26,33:27,34:28,35:38,36:41,37:31,38:31,39:31,40:30,41:12,42:9,43:12,44:24,45:1,46:10,47:1,3200:19}[ccCode]
-	).slice(-2) + ".png";
+// maps WMO weather code to icon
+function getCCicon(wmoCode) {
+    // This is a sample mapping. The original icon set (01-47.png) seems based on Yahoo's codes.
+    // A direct 1-to-1 mapping from WMO is not perfect and may need adjustments.
+	const map = {
+        0: [26, 25],  // Clear -> Sunny/Clear
+        1: [28, 27],  // Mainly Clear -> Mostly Sunny/Mostly Clear
+        2: [28, 27],  // Partly Cloudy -> Partly Cloudy
+        3: [22, 21],  // Overcast -> Cloudy
+        45: [15, 15], // Fog -> Fog
+        48: [15, 15], // Fog -> Fog
+        51: [8, 8],   // Drizzle -> Rain
+        53: [8, 8],
+        55: [8, 8],
+        61: [7, 7],   // Rain -> Showers
+        63: [7, 7],
+        65: [5, 5],
+        71: [10, 10], // Snow -> Snow
+        73: [10, 10],
+        75: [11, 11],
+        80: [7, 7],   // Showers -> Showers
+        81: [5, 5],
+        82: [5, 5],
+        85: [10, 10], // Snow showers
+        86: [11, 11],
+        95: [1, 1],   // Thunderstorm
+        96: [1, 1],
+        99: [1, 1]
+	};
+    // Simplified logic: Assume 'day' for now.
+    const icons = map[wmoCode] || [22, 21]; // Default to cloudy
+    return ['images/icons/' + ('0' + icons[0]).slice(-2) + '.png'];
 }
 
 

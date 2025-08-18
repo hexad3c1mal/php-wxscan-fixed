@@ -73,15 +73,10 @@ RADAR < MAIN CITY < CITY 1 < CITY 2
 				currentConditions() {
 					$('.city-info-slide #subhead-title').text('Currently');
 
-					// CHARIOTS - Temp Fix
-					// City isn't in the location dictonary so grab it from whatever the hell sets the other thing
 					let location_city_fix = $('#city').text();
-					$('.city-info-slide #subhead-city').text(location_city_fix); // location.city pre fix
-					
-					// CHARIOTS - On Further Inspection
-					// The Location Varible is just NULL.
-					// So this code needs to be rewritten to get the data from elsewhere
-					var obsData = location.observations
+					$('.city-info-slide #subhead-city').text(location_city_fix);
+
+					var obsData = obsData_global;
 						strLabels =	'Humidity<br>Dew Point<br>Pressure<Br>Wind<br>Gusts<br>',
 						strData =
 							obsData(0).atmosphere.humidity + '%<br>'+
@@ -114,53 +109,6 @@ RADAR < MAIN CITY < CITY 1 < CITY 2
 					wait(slideDelay);
 
 				}
-
-				// Local Doppler Radar or Radar/Satellite (15 sec, zoomed out with cloud cover)
-				,localDoppler(){
-					showRadar(location.lat, location.long, 8);
-					wait(slideDelay + 1500);
-				}
-
-
-				// Local Forecast -Today (10 sec)
-				,forecast(fidx) {
-					var div = '.info-slide-content.forecast ',
-						forecasts = location.forecasts('daily');					
-					
-					function fillinfo() {						
-
-						fidx = (fidx===undefined ? 0 : fidx);
-
-						$('.city-info-slide #subhead-title').text('Local Forecast');
-
-						// title
-						$(div + '.title').text( forecasts[fidx].name );
-
-						// content
-						resizeText( forecasts[fidx].detailedForecast );
-						$(div + '.content').text( forecasts[fidx].detailedForecast );
-						
-					}
-					
-					fadeToContent(div, fillinfo);
-
-					setTimeout( function() {
-
-						if (fidx<3) {
-							currentDisplay(++fidx);
-						} else {
-							wait(0);	
-						}
-
-					}, slideDelay);					
-					
-				}
-
-
-
-				// Extended Forecast(5 day columns)
-				//,extendedForecast() {},
-				
 		},
 		keys = Object.keys(displays);
 				
