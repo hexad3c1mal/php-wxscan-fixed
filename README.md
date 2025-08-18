@@ -1,12 +1,19 @@
-# Weatherscan Simulation (legacy) Patched
-Weatherscan Simulator made by /u/AnonChickenWalker, patched primarily by flybotworld, and shibedev12 helped a tad 
+# Weatherscan Simulation (Legacy)
+This is a patched version of the original Weatherscan Simulator created by /u/AnonChickenWalker.
+Patching and maintenance have been primarily handled by flybotworld, with additional contributions from hexadec1mal.
 
-To start the PHP Version of the Weatherscan sim, simply run
+## Running the Simulator
+To launch the PHP version of the Weatherscan Simulator, use the following command in your project directory:
+
 ```php -S 0.0.0.0:8080```
 
-This version is as unedited and close to source as possible, with dead APIs being replaced, and expired API Keys replaced.
-Have fun, and remember that this is not great, this is old.
-If you want the good version, check online at:
-If you like mist: [https://v2.weatherscan.net]
-If you are more of a rancher: [https://v2.weatherscan.me]
-Cheers!
+## About This Version
+This release aims to preserve the original experience as closely as possible, with the following adjustments:
+Replaced inactive APIs with working alternatives
+Updated expired API keys
+Minimal modifications to retain authenticity to the launch version
+
+## Looking for the Modern Version?
+If you would like a more up-to-date and feature-rich experience, please visit one of the current Weatherscan projects:
+Mist Weather Media's fork: https://v2.weatherscan.net
+Weather Ranch's fork: https://v2.weatherscan.me
