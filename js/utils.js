@@ -3,10 +3,9 @@
 var GLOBAL_SUNRISE, GLOBAL_SUNSET;
 function fetchSunTimes() {
     if (typeof GLOBAL_LAT !== "undefined" && typeof GLOBAL_LONG !== "undefined") {
-        $.getJSON(`http://api.sunrise-sunset.org/json?lat=${GLOBAL_LAT}&lng=${GLOBAL_LONG}`, function(data) {
-            let today = new Date().toLocaleDateString();
-            GLOBAL_SUNRISE = new Date(`${today} ${data.results.civil_twilight_begin}`);
-            GLOBAL_SUNSET = new Date(`${today} ${data.results.civil_twilight_end}`);
+        $.getJSON(`https://api.sunrise-sunset.org/json?lat=${GLOBAL_LAT}&lng=${GLOBAL_LONG}&formatted=0`, function(data) {
+            GLOBAL_SUNRISE = new Date(data.results.civil_twilight_begin);
+            GLOBAL_SUNSET = new Date(data.results.civil_twilight_end);
         });
     } else {
         setTimeout(fetchSunTimes, 100);
