@@ -151,7 +151,7 @@ if ($cache==0) $cacheStr = '?' . date('l jS \of F Y h:i:s A');
 		<img id="arrow-img" src="images/now.png<?=$cacheStr ?>"/>
 		
 		<div id="marquee2" class="marquee">
-		This is a fork of the original weatherscan simulator 
+		You are watching a simulation of The Weather Channel's "weatherscan" channel! This channel has gone through a lot of changes over the years, and then was shut down in 2022. We can be sad about the official shutdown of weatherscan, or we can do what AnonChickenWalker did, and port the sim to the web so we can always enjoy it! This version of the sim you are seeing is a patched version, with all the API keys and everything else being up to date, although the graphics and packages leave a lot to be desired, this is mostly for preservation purposes. For more information on weatherscan, go to https://www.twcarchive.com/wiki/Weatherscan. Toyota: Let's go places. With a Toyota branded car, the world is at your fingertips. With the greatest in safety, speed, and efficiency, Toyata brings the luxury to you and your family. 
 		</div>
 					
 	</div>
