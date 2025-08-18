@@ -1,3 +1,5 @@
+var GLOBAL_LAT, GLOBAL_LONG;  // declare globals
+
 function DataManager(){
 	var $this = $(this),
 		that = this;
@@ -22,18 +24,11 @@ function DataManager(){
 		_locations[0].init(searchString);
 	};
 		
-	// This function is now simplified. It no longer fetches nearby stations.
-    // It's triggered once the main location is initialized.
 	function initLocations(){
-        // The logic for finding other locations is now handled by groupull.js
-        // and the main weather.js initialization. This manager now primarily
-        // serves as a container for the location objects.
+        // Set globals from the first location
+        GLOBAL_LAT = _locations[0].lat;
+        GLOBAL_LONG = _locations[0].long;
 		
-        // We can add other predefined locations here if needed, or just let
-        // other parts of the app populate the manager.
-        
-        // This trigger now signifies that the primary location is fully ready
-        // and other modules can proceed.
 		$this.trigger('allinit');	
 	}
 }

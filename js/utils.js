@@ -1,3 +1,19 @@
+// Get Sunrise and Sunset, Needed for Icons
+// This won't work after 24 hours pass, but who gives a shit
+var GLOBAL_SUNRISE, GLOBAL_SUNSET;
+function fetchSunTimes() {
+    if (typeof GLOBAL_LAT !== "undefined" && typeof GLOBAL_LONG !== "undefined") {
+        $.getJSON(`http://api.sunrise-sunset.org/json?lat=${GLOBAL_LAT}&lng=${GLOBAL_LONG}`, function(data) {
+            let today = new Date().toLocaleDateString();
+            GLOBAL_SUNRISE = new Date(`${today} ${data.results.civil_twilight_begin}`);
+            GLOBAL_SUNSET = new Date(`${today} ${data.results.civil_twilight_end}`);
+        });
+    } else {
+        setTimeout(fetchSunTimes, 100);
+    }
+}
+fetchSunTimes();
+
 //  Fisher-Yates shuffle
 function shuffle (array) {
 	var i = 0,
@@ -33,36 +49,7 @@ function mapWMOtoText(code) {
 }
 
 function mapWMOtoIcons(code) {
-    // This is a sample mapping. The original icon set (01-47.png) seems based on Yahoo's codes.
-    // A direct 1-to-1 mapping from WMO is not perfect and may need adjustments.
-	const map = {
-        0: [26, 25],  // Clear -> Sunny/Clear
-        1: [28, 27],  // Mainly Clear -> Mostly Sunny/Mostly Clear
-        2: [28, 27],  // Partly Cloudy -> Partly Cloudy
-        3: [22, 21],  // Overcast -> Cloudy
-        45: [15, 15], // Fog -> Fog
-        48: [15, 15], // Fog -> Fog
-        51: [8, 8],   // Drizzle -> Rain
-        53: [8, 8],
-        55: [8, 8],
-        61: [7, 7],   // Rain -> Showers
-        63: [7, 7],
-        65: [5, 5],
-        71: [10, 10], // Snow -> Snow
-        73: [10, 10],
-        75: [11, 11],
-        80: [7, 7],   // Showers -> Showers
-        81: [5, 5],
-        82: [5, 5],
-        85: [10, 10], // Snow showers
-        86: [11, 11],
-        95: [1, 1],   // Thunderstorm
-        96: [1, 1],
-        99: [1, 1]
-	};
-    // Simplified logic: Assume 'day' for now.
-    const icons = map[code] || [22, 21]; // Default to cloudy
-    return ['images/icons/' + ('0' + icons[0]).slice(-2) + '.png'];
+    return getCCicon(code)
 }
 
 function getRandom(min, max) {
@@ -142,36 +129,57 @@ function heatIndex(T, R) { // T = temp, R = relative humidity
 // maps current condition code to icon
 // maps WMO weather code to icon
 function getCCicon(wmoCode) {
-    // This is a sample mapping. The original icon set (01-47.png) seems based on Yahoo's codes.
-    // A direct 1-to-1 mapping from WMO is not perfect and may need adjustments.
-	const map = {
-        0: [26, 25],  // Clear -> Sunny/Clear
-        1: [28, 27],  // Mainly Clear -> Mostly Sunny/Mostly Clear
-        2: [28, 27],  // Partly Cloudy -> Partly Cloudy
-        3: [22, 21],  // Overcast -> Cloudy
-        45: [15, 15], // Fog -> Fog
-        48: [15, 15], // Fog -> Fog
-        51: [8, 8],   // Drizzle -> Rain
+    const map = {
+        0: [26, 25],
+        1: [28, 27],
+        2: [28, 27],
+        3: [22, 21],
+        45: [15, 15],
+        48: [15, 15],
+        51: [8, 8],
         53: [8, 8],
         55: [8, 8],
-        61: [7, 7],   // Rain -> Showers
+        61: [7, 7],
         63: [7, 7],
         65: [5, 5],
-        71: [10, 10], // Snow -> Snow
+        71: [10, 10],
         73: [10, 10],
         75: [11, 11],
-        80: [7, 7],   // Showers -> Showers
+        80: [7, 7],
         81: [5, 5],
         82: [5, 5],
-        85: [10, 10], // Snow showers
+        85: [10, 10],
         86: [11, 11],
-        95: [1, 1],   // Thunderstorm
+        95: [1, 1],
         96: [1, 1],
         99: [1, 1]
-	};
-    // Simplified logic: Assume 'day' for now.
-    const icons = map[wmoCode] || [22, 21]; // Default to cloudy
-    return ['images/icons/' + ('0' + icons[0]).slice(-2) + '.png'];
+    };
+
+    const nightMap = {
+        21: 22,
+        22: 21,
+        23: 24,
+        24: 23,
+        25: 26,
+        26: 25,
+        27: 28,
+        28: 27,
+        30: 35,
+        32: 36,
+        29: 37
+    };
+
+    const icons = map[wmoCode] || [22, 21];
+
+    const now = new Date();
+    const isNight = now < GLOBAL_SUNRISE || now > GLOBAL_SUNSET;
+
+    let iconToUse = icons[0];
+    if (isNight && nightMap[icons[0]]) {
+        iconToUse = nightMap[icons[0]];
+    }
+
+    return ['images/icons/' + ('0' + iconToUse).slice(-2) + '.png'];
 }
 
 

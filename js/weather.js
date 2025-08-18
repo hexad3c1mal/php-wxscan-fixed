@@ -59,7 +59,7 @@ function WeatherManager() {
 			// get lat lon from user's ip
 			// in theory this shouldn't happen but some idiot is gonna try it
 			$.getJSON("http://pro.ip-api.com/json/?key=TShzQlq7O9KuthI", function(data) {						
-				dataMan = createDataManager( data.lat+','+data.lon );
+				dataMan = createDataManager( data.zip );
 			});
 
 		}
@@ -85,26 +85,41 @@ function WeatherManager() {
 		}
 			
 	}
+
+	function waitForData() {
+		return new Promise(resolve => {
+			const interval = setInterval(() => {
+				if (typeof GLOBAL_SUNRISE !== 'undefined') {
+					clearInterval(interval); // Stop checking
+					resolve(); // Fulfill the promise!
+				}
+			}, 100);
+		});
+	}
+
 	
-	
-	function refreshObservationDisplay() {
+	// The 'async' keyword allows us to use 'await' inside.
+	async function refreshObservationDisplay() {
+		// 1. Pause the function here until dataMan is ready.
+		await waitForData();
+		
+		// 2. This code will only execute AFTER the await is complete.
 		var data = dataMan.locations[0].observations(0),
 			cond = data.item.condition,
 			loc  = data.location;
 		
-		if (mainMap===undefined) {
+		if (mainMap === undefined) {
+			// 'that.mainMap' suggests this is part of a class or object.
+			// Make sure 'that' is defined in your scope.
 			mainMap = that.mainMap = new Radar("radar-1", 3, 8, data.item.lat, data.item.long, false);
 			miniMap = new Radar("minimap", 3, 5, data.item.lat, data.item.long);
-		}	
+		}   
 		
 		$('#city').text(loc.city);
 		$('#forecast-city').text(loc.city + ':');
-		$('#current-temp').text( dataMan.locations[0].temperature() ) ;
-		$('#conditions-icon').css('background-image', 'url("' + getCCicon(cond.code) + '")');	
+		$('#current-temp').text(dataMan.locations[0].temperature());
+		$('#conditions-icon').css('background-image', 'url("' + getCCicon(cond.code) + '")');  
 		
 		//weatherAudio.playCurrentConditions(cond);
-
-	}
-
-}
+	}}
 var weatherMan = new WeatherManager();
